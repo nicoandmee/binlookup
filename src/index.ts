@@ -2,15 +2,12 @@
 import got from 'got'
 import process from 'process'
 import KeyvRedis from '@keyv/redis'
-import { BinLookupResponse, BinLookupOptions } from './models/binlist';
+import { BinLookupResponse } from './models/binlist';
 
 import debugConsole from 'debug'
 const debug = debugConsole('binlookup')
 
-// Default cache in map data structure
-const map = new Map()
-
-// Alternative: Redis cache
+// A persistent store (redis)
 let cache;
 if (process.env.REDIS_CACHE) {
   const { REDIS_CACHE } = process.env
@@ -18,8 +15,9 @@ if (process.env.REDIS_CACHE) {
   cache = new KeyvRedis(REDIS_CACHE)
   cache.on('error', (err) => console.error('[redis] Connection Error', err))
 } else {
+  // Default uses cache in memory a la Map
   debug('using in-memory cache')
-  new Map()
+  cache = new Map()
 }
 
 const client = got.extend({
@@ -28,7 +26,7 @@ const client = got.extend({
     'Accept-Version': '3',
     'X-Client': process.versions.node,
   },
-  cache: redis ?? map,
+  cache,
   hooks: {
     beforeRetry: [
       (error, retryCount) => {
@@ -46,11 +44,11 @@ const client = got.extend({
   responseType: 'json'
 })
 
-export default async function binlookup(opts: BinLookupOptions ): Promise<Function> {
-  if (opts.key) {
+export default async function binlookup(key?: string): Promise<Function> {
+  if (key && typeof key === 'string') {
     client.defaults.options.headers = {
       ...client.defaults.options.headers,
-      'Authorization': `Basic ${Buffer.from(opts.key + ':').toString('base64')}`
+      'Authorization': `Basic ${Buffer.from(key + ':').toString('base64')}`
     }
   }
 

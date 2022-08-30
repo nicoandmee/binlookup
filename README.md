@@ -30,20 +30,16 @@ with regular [headlines]() about massive data breaches.
 
 ## Use
 
-Works in browser environments using Browserify or similar.
+Requires Node > 14, demonstrating the now standard ES6 import/export syntax.
 
 ```js
-var lookup = require('binlookup')();
+import binlookup from 'binlookup';
+const lookup = binlookup()
 
-// using callbacks
-lookup('45717360',
- function( err, data ){
-  console.log(data);
- });
+// Use `"type": "module"` and enjoy the glorious top level await!
 
-// using promises
-lookup('45717360').then(
- data => console.log(data));
+const bins = ['53058920', '5588320', '5572812']
+await bins.forEach(async (bin) => console.log(await lookup(bin)));
 ```
 
 Example `data` returned:

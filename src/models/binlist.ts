@@ -1,7 +1,3 @@
-export type BinLookupOptions = {
-    key?: string;
-}
-
 interface Number {
     length: number;
     luhn: boolean;
