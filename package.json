@@ -1,26 +1,49 @@
 {
-	"name": "binlookup",
-	"version": "2.0.1",
-	"description": "Look up BIN/IIN numbers using binlist.net",
-	"repository": "paylike/binlookup",
-	"scripts": {
-		"test": "npm run test:node & npm run test:browser",
-		"test:node": "node test",
-		"test:browser": "browserify -g [ envify purge ] test.js | tap-closer | smokestack"
-	},
-	"dependencies": {
-		"defined": "^1.0.0",
-		"pull-fetch-iso": "^0.0.2",
-		"pull-stream": "^3.5.0"
-	},
-	"devDependencies": {
-		"async-cache": "^1.1.0",
-		"browserify": "^14.3.0",
-		"envify": "^4.0.0",
-		"smokestack": "^3.4.1",
-		"tap-closer": "^1.0.0",
-		"tape": "^4.6.3"
-	},
-	"author": "Thomas Jensen <thomas@paylike.io> (https://paylike.io)",
-	"license": "MIT"
+  "name": "binlookup",
+  "version": "1.0.0",
+  "description": "Interface to the https://binlist.net API",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "keywords": [
+    "binlookup",
+    "binlist",
+    "cards",
+    "cvv"
+  ],
+  "scripts": {
+    "clean": "rimraf dist/*",
+    "tscheck": "tsc --pretty --noEmit",
+    "prebuild": "run-s clean",
+    "build": "run-s build:tsc build:rollup ambient-dts",
+    "build:tsc": "tsc --project tsconfig.json --module commonjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": "git@github.com:nicoandmee/binlookup.git",
+  "author": "Nico Kokonas <nico@nicomee.com> (https://nicomee.com/)",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/debug": "^4.1.7",
+    "@types/node": "^18.7.14",
+    "copyfiles": "^2.4.1",
+    "esbuild": "^0.15.6",
+    "esbuild-register": "^3.3.3",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.4.0",
+    "replace-in-files-cli": "^2.0.0",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.2"
+  },
+  "dependencies": {
+    "@keyv/redis": "^2.5.0",
+    "debug": "^4.3.4",
+    "got": "^12.3.1",
+    "prettier-config-standard": "^5.0.0"
+  }
 }
