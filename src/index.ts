@@ -1,3 +1,4 @@
+
 import got from 'got'
 import process from 'process'
 import KeyvRedis from '@keyv/redis'
@@ -10,14 +11,15 @@ const debug = debugConsole('binlookup')
 const map = new Map()
 
 // Alternative: Redis cache
-let redis
+let cache;
 if (process.env.REDIS_CACHE) {
   const { REDIS_CACHE } = process.env
   debug('using redis cache: %s', REDIS_CACHE)
-  redis = new KeyvRedis(REDIS_CACHE)
-  redis.on('error', (err) => console.error('[redis] Connection Error', err))
+  cache = new KeyvRedis(REDIS_CACHE)
+  cache.on('error', (err) => console.error('[redis] Connection Error', err))
 } else {
   debug('using in-memory cache')
+  new Map()
 }
 
 const client = got.extend({
@@ -51,6 +53,8 @@ export default async function binlookup(opts: BinLookupOptions ): Promise<Functi
       'Authorization': `Basic ${Buffer.from(opts.key + ':').toString('base64')}`
     }
   }
+
+  debug('binlookup headers: %O', client.defaults.options.headers)
 
   return async (bin: string): Promise<BinLookupResponse> => client.get(bin).json()
 }
